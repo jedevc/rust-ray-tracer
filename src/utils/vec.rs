@@ -1,5 +1,5 @@
 use std::fmt;
-use std::ops::{Add, Div, Mul, Sub};
+use std::ops::{Add, Div, Mul, Sub, Neg};
 
 pub type Point = Vec;
 
@@ -93,6 +93,18 @@ impl Div<f64> for Vec {
 
     fn div(self, scalar: f64) -> Self {
         self * (1.0 / scalar)
+    }
+}
+
+impl Neg for Vec {
+    type Output = Self;
+
+    fn neg(self) -> Self {
+        Self {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
     }
 }
 

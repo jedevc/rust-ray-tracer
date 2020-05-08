@@ -1,35 +1,21 @@
+mod hit;
 mod ray;
 mod utils;
 
-use std::io;
-use utils::{Vec, Color, Point};
 use ray::Ray;
+use std::io;
+use utils::{Color, Point, Vec};
+use hit::{Hittable, HittableVec, Sphere};
 
-fn ray_color(r: &Ray) -> Color {
-    let t = hit_sphere(Vec::new(0.0, 0.0, -1.0), 0.5, r);
-    if t > 0.0 {
-        let n = (r.at(t) - Vec::new(0.0, 0.0, -1.0)).unit();
-        return (n + Vec::new(1.0, 1.0, 1.0)) / 2.0;
+fn ray_color(r: &Ray, world: &HittableVec) -> Color {
+    if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
+        return (rec.normal + Vec::new(1.0, 1.0, 1.0)) / 2.0;
     }
 
     let dir = r.dir.unit();
     let t = 0.5 * (dir.y + 1.0);
 
     Color::new(1.0, 1.0, 1.0) * (1.0 - t) + Color::new(0.5, 0.7, 1.0) * t
-}
-
-fn hit_sphere(center: Vec, radius: f64, ray: &Ray) -> f64 {
-    let oc = ray.origin - center;
-    let a = ray.dir.length_squared();
-    let hb = oc.dot(ray.dir);
-    let c = oc.length_squared() - radius * radius;
-
-    let discriminant = hb * hb - a * c;
-    if discriminant < 0.0 {
-        -1.0
-    } else {
-        (-hb - discriminant.sqrt()) / a
-    }
 }
 
 fn main() {
@@ -46,6 +32,10 @@ fn main() {
     let vertical = Vec::new(0.0, 2.25, 0.0);
     let llcorner = origin - horizontal / 2.0 - vertical / 2.0 - Vec::new(0.0, 0.0, 1.0);
 
+    let mut world = HittableVec::new();
+    world.push(Box::new(Sphere::new(Point::new(0.0, 0.0, -1.0), 0.5)));
+    world.push(Box::new(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0)));
+
     let mut stdout = io::stdout();
 
     for j in (0..IMAGE_HEIGHT).rev() {
@@ -56,7 +46,7 @@ fn main() {
 
             let r = Ray::new(origin, llcorner + horizontal * u + vertical * v);
 
-            utils::write_color(&mut stdout, ray_color(&r)).unwrap();
+            utils::write_color(&mut stdout, ray_color(&r, &world)).unwrap();
         }
     }
 
