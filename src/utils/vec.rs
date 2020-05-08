@@ -1,6 +1,8 @@
 use std::fmt;
 use std::ops::{Add, Div, Mul, Sub};
 
+pub type Point = Vec;
+
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Vec {
     pub x: f64,
@@ -18,7 +20,11 @@ impl Vec {
     }
 
     pub fn length_squared(&self) -> f64 {
-        self.x * self.x + self.y * self.y + self.z + self.z
+        self.x * self.x + self.y * self.y + self.z * self.z
+    }
+
+    pub fn unit_vec(&self) -> Self {
+        self.clone() / self.length()
     }
 
     pub fn dot(self, other: Self) -> Self {
@@ -31,10 +37,6 @@ impl Vec {
             y: self.z * other.x - self.x * other.z,
             z: self.x * other.y - self.y * other.x,
         }
-    }
-
-    pub fn unit_vec(self) -> Self {
-        self / self.length()
     }
 }
 
@@ -90,11 +92,7 @@ impl Div<f64> for Vec {
     type Output = Self;
 
     fn div(self, scalar: f64) -> Self {
-        Self {
-            x: self.x / scalar,
-            y: self.y / scalar,
-            z: self.z / scalar,
-        }
+        self * (1.0 / scalar)
     }
 }
 
