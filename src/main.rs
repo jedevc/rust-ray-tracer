@@ -20,15 +20,15 @@ fn ray_color(r: &Ray) -> Color {
 
 fn hit_sphere(center: Vec, radius: f64, ray: &Ray) -> f64 {
     let oc = ray.origin - center;
-    let a = ray.dir.dot(ray.dir);
-    let b = oc.dot(ray.dir) * 2.0;
-    let c = oc.dot(oc) - radius * radius;
+    let a = ray.dir.length_squared();
+    let hb = oc.dot(ray.dir);
+    let c = oc.length_squared() - radius * radius;
 
-    let discriminant = b * b - a * c * 4.0;
+    let discriminant = hb * hb - a * c;
     if discriminant < 0.0 {
         -1.0
     } else {
-        (-b - discriminant.sqrt()) / (2.0 * a)
+        (-hb - discriminant.sqrt()) / a
     }
 }
 
