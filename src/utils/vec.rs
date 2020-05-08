@@ -23,7 +23,7 @@ impl Vec {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
 
-    pub fn unit_vec(&self) -> Self {
+    pub fn unit(&self) -> Self {
         self.clone() / self.length()
     }
 
