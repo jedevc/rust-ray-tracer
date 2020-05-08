@@ -27,8 +27,8 @@ impl Vec {
         self.clone() / self.length()
     }
 
-    pub fn dot(self, other: Self) -> Self {
-        self * other
+    pub fn dot(self, other: Self) -> f64 {
+        self.x * other.x + self.y * other.y + self.z * other.z
     }
 
     pub fn cross(self, other: Self) -> Self {
