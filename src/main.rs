@@ -66,6 +66,11 @@ fn main() {
         0.5,
         Rc::new(Dielectric::new(1.5)),
     )));
+    world.push(Box::new(Sphere::new(
+        Point::new(-1.0, 0.0, -1.0),
+        -0.45,
+        Rc::new(Dielectric::new(1.5)),
+    )));
 
     let mut stdout = io::stdout();
     let mut rng = rand::thread_rng();

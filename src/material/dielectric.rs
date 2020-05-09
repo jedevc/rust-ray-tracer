@@ -1,6 +1,7 @@
 use crate::hit::HitRecord;
 use crate::ray::Ray;
 use crate::utils::Color;
+use rand::Rng;
 
 use super::Material;
 
@@ -27,14 +28,22 @@ impl Material for Dielectric {
         let direction = ray.dir.unit();
         let cos_theta = f64::min(1.0, hit.normal.dot(-direction));
         let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
-        if (etai_etat * sin_theta > 1.0) {
-            // reflect
+        if etai_etat * sin_theta > 1.0 {
+            // must reflect
             let reflected = direction.reflect(hit.normal);
             Some((color, Ray::new(hit.p, reflected)))
         } else {
-            // refract
-            let refracted = direction.refract(hit.normal, etai_etat);
-            Some((color, Ray::new(hit.p, refracted)))
+            // can refract
+            let reflect_prob = super::schlick(cos_theta, etai_etat);
+            if rand::thread_rng().gen_range(0.0, 1.0) < reflect_prob {
+                // reflect
+                let reflected = direction.reflect(hit.normal);
+                Some((color, Ray::new(hit.p, reflected)))
+            } else {
+                // refract
+                let refracted = direction.refract(hit.normal, etai_etat);
+                Some((color, Ray::new(hit.p, refracted)))
+            }
         }
     }
 }
