@@ -7,7 +7,7 @@ use std::io;
 use rand::prelude::*;
 use ray::Ray;
 use camera::Camera;
-use utils::{Color, Point, Vec, random_sphere_point};
+use utils::{Color, Point, random_lambertian_point};
 use hit::{Hittable, HittableVec, Sphere};
 
 fn ray_color(r: &Ray, world: &HittableVec, depth: u32) -> Color {
@@ -15,8 +15,8 @@ fn ray_color(r: &Ray, world: &HittableVec, depth: u32) -> Color {
         return Color::zero();
     }
 
-    if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
-        let target = rec.p + rec.normal + random_sphere_point(1.0, &mut thread_rng());
+    if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
+        let target = rec.p + rec.normal + random_lambertian_point(&mut thread_rng());
         return ray_color(&Ray::new(rec.p, target - rec.p), world, depth - 1) * 0.5;
     }
 

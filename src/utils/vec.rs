@@ -1,4 +1,5 @@
 use std::fmt;
+use std::f64::consts::PI;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign, Neg};
 use rand::prelude::*;
 use rand::distributions::uniform::{SampleUniform, UniformSampler, UniformFloat, SampleBorrow};
@@ -46,14 +47,35 @@ impl Vec {
     }
 }
 
-pub fn random_sphere_point<R: Sized + Rng>(radius: f64, rng :&mut R) -> Point {
+pub fn random_sphere_point<R: Sized + Rng>(rng :&mut R) -> Point {
     let min = Vec::new(0.0, 0.0, 0.0);
-    let max = Vec::new(radius, radius, radius);
+    let max = Vec::new(1.0, 1.0, 1.0);
     loop {
         let p = rng.gen_range(min, max);
         if p.length_squared() < 1.0 {
             return p
         }
+    }
+}
+
+pub fn random_hemisphere_point<R: Sized + Rng>(rng :&mut R, normal: Vec) -> Point {
+    let p = random_sphere_point(rng);
+    if p.dot(normal) > 0.0 {
+        p
+    } else {
+        -p
+    }
+}
+
+pub fn random_lambertian_point<R: Sized + Rng>(rng :&mut R) -> Point {
+    let a: f64 = rng.gen_range(0.0, 2.0 * PI);
+    let z: f64 = rng.gen_range(-1.0, 1.0);
+    let r: f64 = (1.0 - z * z).sqrt();
+
+    Point {
+        x: r * a.cos(),
+        y: r * a.sin(),
+        z,
     }
 }
 
