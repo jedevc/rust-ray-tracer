@@ -1,11 +1,15 @@
 mod hit;
 mod ray;
 mod utils;
+mod camera;
 
-use ray::Ray;
 use std::io;
+use rand::prelude::*;
+use ray::Ray;
+use camera::Camera;
 use utils::{Color, Point, Vec};
 use hit::{Hittable, HittableVec, Sphere};
+
 
 fn ray_color(r: &Ray, world: &HittableVec) -> Color {
     if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
@@ -22,31 +26,35 @@ fn main() {
     const ASPECT_RATIO: f64 = 16.0 / 9.0;
     const IMAGE_WIDTH: u32 = 384;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
+    const SAMPLE_COUNT: u32 = 32;
 
     println!("P3");
     println!("{}, {}", IMAGE_WIDTH, IMAGE_HEIGHT);
     println!("255");
 
-    let origin = Point::new(0.0, 0.0, 0.0);
-    let horizontal = Vec::new(4.0, 0.0, 0.0);
-    let vertical = Vec::new(0.0, 2.25, 0.0);
-    let llcorner = origin - horizontal / 2.0 - vertical / 2.0 - Vec::new(0.0, 0.0, 1.0);
+    let cam = Camera::new();
 
     let mut world = HittableVec::new();
     world.push(Box::new(Sphere::new(Point::new(0.0, 0.0, -1.0), 0.5)));
     world.push(Box::new(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0)));
 
     let mut stdout = io::stdout();
+    let mut rng = rand::thread_rng();
 
     for j in (0..IMAGE_HEIGHT).rev() {
         eprint!("\rScanlines remaining: {}  ", j);
         for i in 0..IMAGE_WIDTH {
-            let u = (i as f64) / ((IMAGE_WIDTH - 1) as f64);
-            let v = (j as f64) / ((IMAGE_HEIGHT - 1) as f64);
+            let mut color = Color::new(0.0, 0.0, 0.0);
 
-            let r = Ray::new(origin, llcorner + horizontal * u + vertical * v);
+            for s in 0..SAMPLE_COUNT {
+                let u = (i as f64 + rng.gen_range(0.0, 1.0)) / ((IMAGE_WIDTH - 1) as f64);
+                let v = (j as f64 + rng.gen_range(0.0, 1.0)) / ((IMAGE_HEIGHT - 1) as f64);
 
-            utils::write_color(&mut stdout, ray_color(&r, &world)).unwrap();
+                let r = cam.cast_ray(u, v);
+                color = color + ray_color(&r, &world);
+            }
+
+            utils::write_color(&mut stdout, color, SAMPLE_COUNT).unwrap();
         }
     }
 
