@@ -46,6 +46,13 @@ impl Vec {
         self - normal * self.dot(normal) * 2.0
     }
 
+    pub fn refract(self, normal: Self, etai_etat: f64) -> Self {
+        let cos_theta = normal.dot(-self);
+        let r_parallel = (self + normal * cos_theta) * etai_etat;
+        let r_perp = normal * -(1.0 - r_parallel.length_squared()).sqrt();
+        r_parallel + r_perp
+    }
+
     pub fn cross(self, other: Self) -> Self {
         Self {
             x: self.y * other.z - self.z * other.y,

@@ -6,7 +6,7 @@ mod utils;
 
 use camera::Camera;
 use hit::{Hittable, HittableVec, Sphere};
-use material::{Lambertian, Metal};
+use material::{Lambertian, Metal, Dielectric};
 use rand::prelude::*;
 use ray::Ray;
 use std::io;
@@ -49,7 +49,7 @@ fn main() {
     world.push(Box::new(Sphere::new(
         Point::new(0.0, 0.0, -1.0),
         0.5,
-        Rc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3))),
+        Rc::new(Lambertian::new(Color::new(0.1, 0.2, 0.5))),
     )));
     world.push(Box::new(Sphere::new(
         Point::new(0.0, -100.5, -1.0),
@@ -59,12 +59,12 @@ fn main() {
     world.push(Box::new(Sphere::new(
         Point::new(1.0, 0.0, -1.0),
         0.5,
-        Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.3)),
+        Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0)),
     )));
     world.push(Box::new(Sphere::new(
         Point::new(-1.0, 0.0, -1.0),
         0.5,
-        Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 1.0)),
+        Rc::new(Dielectric::new(1.5)),
     )));
 
     let mut stdout = io::stdout();
