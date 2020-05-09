@@ -1,5 +1,5 @@
 use std::fmt;
-use std::ops::{Add, Div, Mul, Sub, Neg};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign, Neg};
 
 pub type Point = Vec;
 
@@ -52,6 +52,14 @@ impl Add for Vec {
     }
 }
 
+impl AddAssign for Vec {
+    fn add_assign(&mut self, other: Self) {
+        self.x += other.x;
+        self.y += other.y;
+        self.z += other.z;
+    }
+}
+
 impl Sub for Vec {
     type Output = Self;
 
@@ -61,6 +69,14 @@ impl Sub for Vec {
             y: self.y - other.y,
             z: self.z - other.z,
         }
+    }
+}
+
+impl SubAssign for Vec {
+    fn sub_assign(&mut self, other: Self) {
+        self.x -= other.x;
+        self.y -= other.y;
+        self.z -= other.z;
     }
 }
 
@@ -76,6 +92,14 @@ impl Mul for Vec {
     }
 }
 
+impl MulAssign for Vec {
+    fn mul_assign(&mut self, other: Self) {
+        self.x *= other.x;
+        self.y *= other.y;
+        self.z *= other.z;
+    }
+}
+
 impl Mul<f64> for Vec {
     type Output = Self;
 
@@ -88,11 +112,27 @@ impl Mul<f64> for Vec {
     }
 }
 
+impl MulAssign<f64> for Vec {
+    fn mul_assign(&mut self, scalar: f64) {
+        self.x *= scalar;
+        self.y *= scalar;
+        self.z *= scalar;
+    }
+}
+
 impl Div<f64> for Vec {
     type Output = Self;
 
     fn div(self, scalar: f64) -> Self {
         self * (1.0 / scalar)
+    }
+}
+
+impl DivAssign<f64> for Vec {
+    fn div_assign(&mut self, scalar: f64) {
+        self.x /= scalar;
+        self.y /= scalar;
+        self.z /= scalar;
     }
 }
 

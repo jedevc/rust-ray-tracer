@@ -51,7 +51,7 @@ fn main() {
                 let v = (j as f64 + rng.gen_range(0.0, 1.0)) / ((IMAGE_HEIGHT - 1) as f64);
 
                 let r = cam.cast_ray(u, v);
-                color = color + ray_color(&r, &world);
+                color += ray_color(&r, &world);
             }
 
             utils::write_color(&mut stdout, color, SAMPLE_COUNT).unwrap();
