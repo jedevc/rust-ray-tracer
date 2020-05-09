@@ -1,5 +1,5 @@
-use super::utils::{Point, Vec};
-use super::ray::Ray;
+use crate::ray::Ray;
+use crate::utils::{Point, Vec};
 
 pub struct Camera {
     pub origin: Point,
@@ -16,11 +16,17 @@ impl Camera {
         let llcorner = origin - horizontal / 2.0 - vertical / 2.0 - Vec::new(0.0, 0.0, 1.0);
 
         Camera {
-            origin, horizontal, vertical, llcorner
-        } 
+            origin,
+            horizontal,
+            vertical,
+            llcorner,
+        }
     }
 
     pub fn cast_ray(&self, u: f64, v: f64) -> Ray {
-        Ray::new(self.origin, self.llcorner + self.horizontal * u + self.vertical * v)
+        Ray::new(
+            self.origin,
+            self.llcorner + self.horizontal * u + self.vertical * v,
+        )
     }
 }

@@ -1,6 +1,6 @@
-use crate::utils::{vec, Color};
-use crate::ray::Ray;
 use crate::hit::HitRecord;
+use crate::ray::Ray;
+use crate::utils::{vec, Color};
 
 use super::Material;
 

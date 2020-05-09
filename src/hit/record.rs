@@ -1,5 +1,6 @@
-use super::{Vec, Point, Ray};
-use crate::material::{Material};
+use crate::material::Material;
+use crate::ray::Ray;
+use crate::utils::{Point, Vec};
 use std::rc::Rc;
 
 pub struct HitRecord {

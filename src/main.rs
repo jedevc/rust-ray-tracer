@@ -1,17 +1,17 @@
+mod camera;
 mod hit;
+mod material;
 mod ray;
 mod utils;
-mod camera;
-mod material;
 
-use std::io;
-use std::rc::Rc;
-use rand::prelude::*;
-use ray::Ray;
 use camera::Camera;
-use utils::{Color, Point, random_lambertian_point};
 use hit::{Hittable, HittableVec, Sphere};
 use material::{Lambertian, Metal};
+use rand::prelude::*;
+use ray::Ray;
+use std::io;
+use std::rc::Rc;
+use utils::{random_lambertian_point, Color, Point};
 
 fn ray_color(r: &Ray, world: &HittableVec, depth: u32) -> Color {
     if depth <= 0 {
@@ -23,7 +23,7 @@ fn ray_color(r: &Ray, world: &HittableVec, depth: u32) -> Color {
             attenuation * ray_color(&scattered, world, depth - 1)
         } else {
             Color::zero()
-        }
+        };
     }
 
     let dir = r.dir.unit();
@@ -47,17 +47,25 @@ fn main() {
 
     let mut world = HittableVec::new();
     world.push(Box::new(Sphere::new(
-        Point::new(0.0, 0.0, -1.0), 0.5,
-        Rc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3))))));
+        Point::new(0.0, 0.0, -1.0),
+        0.5,
+        Rc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3))),
+    )));
     world.push(Box::new(Sphere::new(
-        Point::new(0.0, -100.5, -1.0), 100.0,
-        Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0))))));
+        Point::new(0.0, -100.5, -1.0),
+        100.0,
+        Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0))),
+    )));
     world.push(Box::new(Sphere::new(
-        Point::new(1.0, 0.0, -1.0), 0.5,
-        Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.3)))));
+        Point::new(1.0, 0.0, -1.0),
+        0.5,
+        Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.3)),
+    )));
     world.push(Box::new(Sphere::new(
-        Point::new(-1.0, 0.0, -1.0), 0.5,
-        Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 1.0)))));
+        Point::new(-1.0, 0.0, -1.0),
+        0.5,
+        Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 1.0)),
+    )));
 
     let mut stdout = io::stdout();
     let mut rng = rand::thread_rng();

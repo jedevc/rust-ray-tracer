@@ -1,4 +1,4 @@
-use super::utils::{Point, Vec};
+use crate::utils::{Point, Vec};
 
 pub struct Ray {
     pub origin: Point,

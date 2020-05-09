@@ -1,7 +1,6 @@
-use std::io;
-
 use super::vec;
 use std::cmp::PartialOrd;
+use std::io;
 
 pub type Color = vec::Vec;
 
@@ -26,7 +25,8 @@ pub fn write_color(writer: &mut impl io::Write, color: Color, samples: u32) -> i
     let b = clamp(b.sqrt(), 0.0, 0.999);
 
     writeln!(
-        writer, "{} {} {}",
+        writer,
+        "{} {} {}",
         (r * 256.0) as u8,
         (g * 256.0) as u8,
         (b * 256.0) as u8

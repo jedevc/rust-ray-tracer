@@ -1,9 +1,9 @@
 mod lambertian;
 mod metal;
 
-use super::Ray;
-use super::hit::HitRecord;
-use super::utils::Color;
+use crate::hit::HitRecord;
+use crate::ray::Ray;
+use crate::utils::Color;
 
 pub use lambertian::*;
 pub use metal::*;

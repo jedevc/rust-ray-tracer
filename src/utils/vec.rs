@@ -1,8 +1,8 @@
-use std::fmt;
-use std::f64::consts::PI;
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign, Neg};
+use rand::distributions::uniform::{SampleBorrow, SampleUniform, UniformFloat, UniformSampler};
 use rand::prelude::*;
-use rand::distributions::uniform::{SampleUniform, UniformSampler, UniformFloat, SampleBorrow};
+use std::f64::consts::PI;
+use std::fmt;
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 pub type Point = Vec;
 
@@ -19,7 +19,11 @@ impl Vec {
     }
 
     pub fn zero() -> Self {
-        Self { x: 0.0, y: 0.0, z: 0.0 }
+        Self {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+        }
     }
 
     pub fn length(&self) -> f64 {
@@ -51,18 +55,18 @@ impl Vec {
     }
 }
 
-pub fn random_sphere_point<R: Sized + Rng>(rng :&mut R) -> Point {
+pub fn random_sphere_point<R: Sized + Rng>(rng: &mut R) -> Point {
     let min = Vec::new(0.0, 0.0, 0.0);
     let max = Vec::new(1.0, 1.0, 1.0);
     loop {
         let p = rng.gen_range(min, max);
         if p.length_squared() < 1.0 {
-            return p
+            return p;
         }
     }
 }
 
-pub fn random_hemisphere_point<R: Sized + Rng>(rng :&mut R, normal: Vec) -> Point {
+pub fn random_hemisphere_point<R: Sized + Rng>(rng: &mut R, normal: Vec) -> Point {
     let p = random_sphere_point(rng);
     if p.dot(normal) > 0.0 {
         p
@@ -71,7 +75,7 @@ pub fn random_hemisphere_point<R: Sized + Rng>(rng :&mut R, normal: Vec) -> Poin
     }
 }
 
-pub fn random_lambertian_point<R: Sized + Rng>(rng :&mut R) -> Point {
+pub fn random_lambertian_point<R: Sized + Rng>(rng: &mut R) -> Point {
     let a: f64 = rng.gen_range(0.0, 2.0 * PI);
     let z: f64 = rng.gen_range(-1.0, 1.0);
     let r: f64 = (1.0 - z * z).sqrt();
@@ -208,8 +212,9 @@ impl UniformSampler for UniformVec {
     type X = Vec;
 
     fn new<B1, B2>(low: B1, high: B2) -> Self
-        where B1: SampleBorrow<Self::X> + Sized,
-              B2: SampleBorrow<Self::X> + Sized
+    where
+        B1: SampleBorrow<Self::X> + Sized,
+        B2: SampleBorrow<Self::X> + Sized,
     {
         Self {
             x: UniformFloat::new(low.borrow().x, high.borrow().x),
@@ -219,8 +224,9 @@ impl UniformSampler for UniformVec {
     }
 
     fn new_inclusive<B1, B2>(low: B1, high: B2) -> Self
-        where B1: SampleBorrow<Self::X> + Sized,
-              B2: SampleBorrow<Self::X> + Sized
+    where
+        B1: SampleBorrow<Self::X> + Sized,
+        B2: SampleBorrow<Self::X> + Sized,
     {
         UniformSampler::new(low, high)
     }

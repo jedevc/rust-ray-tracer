@@ -1,9 +1,9 @@
-use std::vec;
-use super::ray::Ray;
-use super::utils::{Point, Vec};
-
 mod record;
 mod sphere;
+
+use crate::ray::Ray;
+use crate::utils::{Point, Vec};
+use std::vec;
 
 pub use record::*;
 pub use sphere::*;

@@ -1,11 +1,11 @@
-use crate::utils::{vec, Color};
-use crate::ray::Ray;
 use crate::hit::HitRecord;
+use crate::ray::Ray;
+use crate::utils::{vec, Color};
 
 use super::Material;
 
 pub struct Lambertian {
-    pub albedo: Color
+    pub albedo: Color,
 }
 
 impl Lambertian {
