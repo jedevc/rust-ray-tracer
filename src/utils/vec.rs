@@ -38,6 +38,10 @@ impl Vec {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
+    pub fn reflect(self, normal: Self) -> Self {
+        self - normal * self.dot(normal) * 2.0
+    }
+
     pub fn cross(self, other: Self) -> Self {
         Self {
             x: self.y * other.z - self.z * other.y,

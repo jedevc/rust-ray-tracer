@@ -1,15 +1,19 @@
+use std::rc::Rc;
 use super::{Hittable, HitRecord, Vec, Point, Ray};
+use crate::material::Material;
 
 pub struct Sphere {
     pub center: Point,
     pub radius: f64,
+    pub material: Rc<dyn Material>
 }
 
 impl Sphere {
-    pub fn new(center: Vec, radius: f64) -> Self {
+    pub fn new(center: Vec, radius: f64, material: Rc<dyn Material>) -> Self {
         Sphere {
             center,
-            radius
+            radius,
+            material,
         }
     }
 }
@@ -31,14 +35,14 @@ impl Hittable for Sphere {
         if solve > t_min && solve < t_max {
             let p = ray.at(solve);
             let normal = (p - self.center) / self.radius;
-            return Some(HitRecord::new(p, solve, ray, normal));
+            return Some(HitRecord::new(p, solve, ray, normal, Rc::clone(&self.material)));
         }
 
         let solve = (-hb + root) / a;
         if solve > t_min && solve < t_max {
             let p = ray.at(solve);
             let normal = (p - self.center) / self.radius;
-            return Some(HitRecord::new(p, solve, ray, normal));
+            return Some(HitRecord::new(p, solve, ray, normal, Rc::clone(&self.material)));
         }
 
         None
