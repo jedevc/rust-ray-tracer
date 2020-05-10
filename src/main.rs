@@ -4,6 +4,7 @@ mod material;
 mod ray;
 mod utils;
 
+use std::f64::consts::PI;
 use camera::Camera;
 use hit::{Hittable, HittableVec, Sphere};
 use material::{Lambertian, Metal, Dielectric};
@@ -11,7 +12,7 @@ use rand::prelude::*;
 use ray::Ray;
 use std::io;
 use std::rc::Rc;
-use utils::{random_lambertian_point, Color, Point};
+use utils::{random_lambertian_point, Color, Point, Vec};
 
 fn ray_color(r: &Ray, world: &HittableVec, depth: u32) -> Color {
     if depth <= 0 {
@@ -43,7 +44,12 @@ fn main() {
     println!("{}, {}", IMAGE_WIDTH, IMAGE_HEIGHT);
     println!("255");
 
-    let cam = Camera::new();
+    let vup = Vec::new(0.0, 1.0, 0.0);
+    let cam = Camera::new(
+        Point::new(-2.0, 2.0, 1.0),
+        Point::new(0.0, 0.0, -1.0),
+        vup, (20f64).to_radians(), ASPECT_RATIO
+    );
 
     let mut world = HittableVec::new();
     world.push(Box::new(Sphere::new(
