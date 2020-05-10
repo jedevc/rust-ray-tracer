@@ -7,7 +7,7 @@ mod utils;
 use std::f64::consts::PI;
 use camera::Camera;
 use hit::{Hittable, HittableVec, Sphere};
-use material::{Lambertian, Metal, Dielectric};
+use material::{Material, Lambertian, Metal, Dielectric};
 use rand::prelude::*;
 use ray::Ray;
 use std::io;
@@ -35,9 +35,9 @@ fn ray_color(r: &Ray, world: &HittableVec, depth: u32) -> Color {
 
 fn main() {
     const ASPECT_RATIO: f64 = 16.0 / 9.0;
-    const IMAGE_WIDTH: u32 = 384;
+    const IMAGE_WIDTH: u32 = 800;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-    const SAMPLE_COUNT: u32 = 100;
+    const SAMPLE_COUNT: u32 = 150;
     const MAX_DEPTH: u32 = 50;
 
     println!("P3");
@@ -45,40 +45,15 @@ fn main() {
     println!("255");
 
     let vup = Vec::new(0.0, 1.0, 0.0);
-    let lookfrom = Point::new(-2.0, 2.0, 1.0);
-    let lookat = Point::new(0.0, 0.0, -1.0);
+    let lookfrom = Point::new(13.0, 2.0, 3.0);
+    let lookat = Point::new(0.0, 0.0, 0.0);
     let cam = Camera::new(
         lookfrom, lookat,
         vup, (20f64).to_radians(), ASPECT_RATIO,
-        2.0, (lookfrom - lookat).length(),
+        0.1, 10.0,
     );
 
-    let mut world = HittableVec::new();
-    world.push(Box::new(Sphere::new(
-        Point::new(0.0, 0.0, -1.0),
-        0.5,
-        Rc::new(Lambertian::new(Color::new(0.1, 0.2, 0.5))),
-    )));
-    world.push(Box::new(Sphere::new(
-        Point::new(0.0, -100.5, -1.0),
-        100.0,
-        Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0))),
-    )));
-    world.push(Box::new(Sphere::new(
-        Point::new(1.0, 0.0, -1.0),
-        0.5,
-        Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0)),
-    )));
-    world.push(Box::new(Sphere::new(
-        Point::new(-1.0, 0.0, -1.0),
-        0.5,
-        Rc::new(Dielectric::new(1.5)),
-    )));
-    world.push(Box::new(Sphere::new(
-        Point::new(-1.0, 0.0, -1.0),
-        -0.45,
-        Rc::new(Dielectric::new(1.5)),
-    )));
+    let world = cover_scene();
 
     let mut stdout = io::stdout();
     let mut rng = rand::thread_rng();
@@ -101,4 +76,73 @@ fn main() {
     }
 
     eprintln!("\nDone!");
+}
+
+fn cover_scene() -> HittableVec {
+    let mut world = HittableVec::new();
+
+    // floor
+    world.push(Box::new(Sphere::new(
+        Point::new(0.0, -1000.0, 0.0),
+        1000.0,
+        Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5))),
+    )));
+
+    // scatters
+    let mut rng = rand::thread_rng();
+    for a in -11..11 {
+        for b in -11..11 {
+            let mat_choice = rng.gen_range(0.0, 1.0);
+            let center = Point::new(
+                a as f64 + rng.gen_range(0.0, 0.9),
+                0.2,
+                b as f64 + rng.gen_range(0.0, 0.9));
+
+            let offset = center - Vec::new(4.0, 0.2, 0.0);
+            if offset.length() < 0.9 {
+                continue;
+            }
+
+            let material: Rc<dyn Material>;
+            if mat_choice < 0.8 {
+                // diffuse
+                let min = Color::new(0.0, 0.0, 0.0);
+                let max = Color::new(1.0, 1.0, 1.0);
+                let albedo = rng.gen_range(min, max) * rng.gen_range(min, max);
+                material = Rc::new(Lambertian::new(albedo));
+            } else if mat_choice < 0.95 {
+                // metal
+                let min = Color::new(0.5, 0.5, 0.5);
+                let max = Color::new(1.0, 1.0, 1.0);
+                let albedo = rng.gen_range(min, max);
+                let fuzz = rng.gen_range(0.0, 0.5);
+                material = Rc::new(Metal::new(albedo, fuzz));
+            } else {
+                // glass
+                material = Rc::new(Dielectric::new(1.5));
+            }
+
+            let obj = Box::new(Sphere::new(center, 0.2, material));
+            world.push(obj);
+        }
+    }
+
+    // centerpieces
+    world.push(Box::new(Sphere::new(
+        Point::new(0.0, 1.0, 0.0),
+        1.0,
+        Rc::new(Dielectric::new(1.5)),
+    )));
+    world.push(Box::new(Sphere::new(
+        Point::new(-4.0, 1.0, 0.0),
+        1.0,
+        Rc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1))),
+    )));
+    world.push(Box::new(Sphere::new(
+        Point::new(4.0, 1.0, 0.0),
+        1.0,
+        Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0)),
+    )));
+
+    world
 }
