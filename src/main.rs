@@ -45,10 +45,12 @@ fn main() {
     println!("255");
 
     let vup = Vec::new(0.0, 1.0, 0.0);
+    let lookfrom = Point::new(-2.0, 2.0, 1.0);
+    let lookat = Point::new(0.0, 0.0, -1.0);
     let cam = Camera::new(
-        Point::new(-2.0, 2.0, 1.0),
-        Point::new(0.0, 0.0, -1.0),
-        vup, (20f64).to_radians(), ASPECT_RATIO
+        lookfrom, lookat,
+        vup, (20f64).to_radians(), ASPECT_RATIO,
+        2.0, (lookfrom - lookat).length(),
     );
 
     let mut world = HittableVec::new();

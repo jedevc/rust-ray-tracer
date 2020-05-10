@@ -63,7 +63,7 @@ impl Vec {
 }
 
 pub fn random_sphere_point<R: Sized + Rng>(rng: &mut R) -> Point {
-    let min = Vec::new(0.0, 0.0, 0.0);
+    let min = Vec::new(-1.0, -1.0, -1.0);
     let max = Vec::new(1.0, 1.0, 1.0);
     loop {
         let p = rng.gen_range(min, max);
@@ -91,6 +91,18 @@ pub fn random_lambertian_point<R: Sized + Rng>(rng: &mut R) -> Point {
         x: r * a.cos(),
         y: r * a.sin(),
         z,
+    }
+}
+
+pub fn random_disk_point<R: Sized + Rng>(rng: &mut R) -> Point {
+    loop {
+        let x = rng.gen_range(-1.0, 1.0);
+        let y = rng.gen_range(-1.0, 1.0);
+        let p = Point::new(x, y, 0.0);
+
+        if p.length_squared() < 1.0 {
+            return p;
+        }
     }
 }
 
