@@ -3,6 +3,8 @@
 This is a simple and minimal ray tracer, built in a weekend, using the
 raytracing book [here](https://raytracing.github.io/books/RayTracingInOneWeekend.html).
 
+![Cover image](https://raw.githubusercontent.com/jedevc/rust-ray-tracer/master/cover.png)
+
 ## Running
 
 Build and run the raytracer:
